@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Order Booking</title>
+    
+
+</head>
+<body>
+    <h1>Order Booking</h1>
+  <section>
+    <?php
+session_start();
+error_reporting(0);
+include('includes/dbconnection.php');
+$sqlInsert = "INSERT INTO `ordertracking` (`orderid`, `deliveryboyname`, `status`)
+                  SELECT DISTINCT `OrderNumber`, 'Delivery Boy Name', 'Initial Status' FROM `tbltracking`";
+    if ($conn->query($sqlInsert) === TRUE) {
+        echo "Records inserted successfully.";
+    } else {
+        echo "Error: " . $sqlInsert . "<br>" . $conn->error;
+    }
+    $conn->close();
+exit("Error: " . $e->getMessage());
+?>
+  </section>
+    <form method="post">
+        <label for="orderNumber">Select Order Number:</label>
+        <select name="orderNumber" id="orderNumber">
+            <?php
+            if (!$conn->connect_error) {
+                $sql = "SELECT ordernum FROM tblorderfuel";
+                $result = $conn->query($sql);
+                
+                if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                        echo "<option value='" . $row["ordernum"] . "'>" . $row["ordernum"] . "</option>";
+                    }
+                }
+            }
+            $conn->close();
+            ?>
+        </select>
+
+        <label for="deliveryBoy">Delivery Boy:</label>
+        <input type="text" name="deliveryBoy" id="deliveryBoy" required>
+
+        <button type="submit">Book Order</button>
+    </form>
+
+    <script>
+        document.getElementById("orderNumber").addEventListener("change", function() {
+            var selectedOption = this.value;
+            var options = this.getElementsByTagName("option");
+            for (var i = 0; i < options.length; i++) {
+                if (options[i].value === selectedOption) {
+                    options[i].remove();
+                    break;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
